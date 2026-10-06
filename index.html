@@ -1,63 +1,82 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Pubgolf scorebord</title>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>⛳ Pubgolf</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
-:root{--bg:#eef2ea;--surface:#fff;--line:#cfd9c8;--text:#17261f;--muted:#5d7066;--accent:#8a6512;--accent-bg:#f3e6bf;--under:#1f7a3a;--over:#b4472a;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14231d;--surface:#1d3329;--line:#2f4a3d;--text:#ece8dc;--muted:#9bb0a4;--accent:#d4a83c;--accent-bg:#3a3318;--under:#7fd28f;--over:#ef8a6b}}
-:root[data-theme="dark"]{--bg:#14231d;--surface:#1d3329;--line:#2f4a3d;--text:#ece8dc;--muted:#9bb0a4;--accent:#d4a83c;--accent-bg:#3a3318;--under:#7fd28f;--over:#ef8a6b}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-*{box-sizing:border-box}
+:root{--bg:#130f1e;--bg2:#1b1730;--bg3:#262040;--gold:#f3b65c;--gold2:#ffcd86;--cream:#f4efe6;--muted:#a09aba;--border:rgba(255,255,255,0.09);--border2:rgba(243,182,92,0.40);--red:#ff8f8f;--font-display:'Bricolage Grotesque',sans-serif;--font-body:'Hanken Grotesk',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
 [hidden]{display:none!important}
-body{margin:0;background:var(--bg);color:var(--text);font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.4}
-main{max-width:640px;margin:0 auto;padding:16px 14px 40px}
-h1{font-size:1.5rem;font-weight:800;margin:4px 0 12px}
-nav{display:flex;gap:6px;margin-bottom:16px}
-nav button{flex:1;padding:10px 6px;border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:10px;font:inherit;font-weight:600;cursor:pointer}
-nav button[aria-selected="true"]{background:var(--accent);color:var(--bg);border-color:var(--accent)}
-button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.hole{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+body{background-color:#130f1e;background-image:radial-gradient(900px 520px at 8% -12%,rgba(243,182,92,0.14),transparent 60%),radial-gradient(820px 640px at 108% 112%,rgba(125,92,218,0.24),transparent 55%);background-attachment:fixed;color:var(--cream);font-family:var(--font-body);min-height:100vh;display:flex;justify-content:center;padding:1.5rem;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.card{position:relative;z-index:1;width:100%;max-width:480px;align-self:flex-start;margin:auto 0;background:linear-gradient(180deg,rgba(40,34,66,0.7),rgba(24,20,42,0.7));backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:24px;box-shadow:0 36px 90px -36px rgba(0,0,0,0.8);padding:1.75rem 1.4rem;animation:cardin .5s ease both}
+@keyframes cardin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.logo{font-family:var(--font-display);font-weight:800;font-size:46px;letter-spacing:-0.02em;text-align:center}
+.logo span{color:var(--gold)}
+.sub{text-align:center;font-size:13px;color:var(--muted);margin:2px 0 1.4rem;min-height:1.2em}
+label{font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px}
+input{font-family:var(--font-body)}
+input[type=text],input[type=password],input[type=number]{width:100%;background:rgba(0,0,0,0.28);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--cream);font-size:15px;outline:none}
+input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(243,182,92,0.16)}
+input::placeholder{color:var(--muted)}
+.pw-wrap{position:relative;margin-bottom:1rem}.pw-wrap input{padding-right:44px}
+.pw-eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:transparent;border:none;cursor:pointer;font-size:18px;padding:4px}
+.err{color:var(--red);font-size:13px;margin-bottom:.75rem;min-height:1em}
+.btn{width:100%;padding:13px;font-size:15px;font-weight:700;font-family:var(--font-body);border-radius:14px;border:none;cursor:pointer}
+.btn-gold{background:linear-gradient(180deg,var(--gold2),var(--gold));color:#2a1c05;box-shadow:0 12px 26px -12px rgba(243,182,92,0.65)}
+.btn-gold:hover{filter:brightness(1.05)}
+.btn-line{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:10px 16px;font-size:14px;font-weight:600;font-family:var(--font-body);cursor:pointer}
+.btn-line:hover{border-color:var(--gold);color:var(--cream)}
+.btn-line.danger:hover{border-color:var(--red);color:var(--red)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+nav{display:flex;gap:6px;margin-bottom:1.2rem}
+nav button{flex:1;padding:10px 6px;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--cream);border-radius:12px;font:600 14px var(--font-body);cursor:pointer}
+nav button[aria-selected="true"]{background:linear-gradient(180deg,var(--gold2),var(--gold));color:#2a1c05;border-color:var(--gold)}
+.hole{display:flex;align-items:center;gap:10px;margin-bottom:1rem}
 .hole .t{flex:1;text-align:center}
-.hole .t b{display:block;font-size:1.25rem;font-weight:800}
-.hole .t span{color:var(--muted);font-size:.9rem}
-.nb{width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--text);font-size:1.3rem;cursor:pointer}
-.row{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-bottom:8px}
+.hole .t b{display:block;font-family:var(--font-display);font-size:1.45rem;font-weight:800}
+.hole .t span{color:var(--muted);font-size:.85rem}
+.nb{width:46px;height:46px;border-radius:50%;border:1px solid var(--border2);background:rgba(243,182,92,0.08);color:var(--gold);font-size:1.4rem;cursor:pointer}
+.row{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:14px;padding:8px 10px;margin-bottom:8px}
 .row .n{flex:1;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.step{width:48px;height:48px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:1.5rem;font-weight:600;cursor:pointer}
-.step:active{background:var(--accent-bg)}
-.val{width:44px;text-align:center;font-size:1.6rem;font-weight:800}
+.step{width:48px;height:48px;border-radius:12px;border:1px solid var(--border2);background:rgba(0,0,0,0.28);color:var(--cream);font-size:1.5rem;font-weight:600;cursor:pointer}
+.step:active{background:rgba(243,182,92,0.2)}
+.val{width:44px;text-align:center;font-family:var(--font-display);font-size:1.7rem;font-weight:800;color:var(--gold)}
 .val.empty{color:var(--muted)}
-.rank{display:grid;grid-template-columns:34px 1fr auto auto;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}
-.rank.first{border-color:var(--accent);background:var(--accent-bg)}
-.rank .pos{font-size:1.4rem;font-weight:800;color:var(--accent)}
-.rank .meta{color:var(--muted);font-size:.8rem}
-.par{font-weight:800;font-size:1.25rem;min-width:44px;text-align:right}
-.tot{color:var(--muted);min-width:36px;text-align:right}
-.under{color:var(--under)}.over{color:var(--over)}
-.wrap{overflow-x:auto;margin-top:18px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.sb-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,0.04);margin-bottom:8px}
+.sb-item.first{border-color:var(--gold);background:rgba(243,182,92,0.12)}
+.sb-rank{font-size:18px;width:28px;text-align:center}
+.sb-name{flex:1;min-width:0}.sb-name b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-name small{color:var(--muted);font-size:12px}
+.sb-pts{font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:var(--gold)}
+.wrap{overflow-x:auto;margin-top:1.2rem;border:1px solid var(--border);border-radius:14px}
 table{border-collapse:collapse;width:100%;font-size:.85rem}
-th,td{padding:7px 8px;text-align:center;border-bottom:1px solid var(--line);white-space:nowrap}
-th:first-child,td:first-child{position:sticky;left:0;background:var(--surface);text-align:left;font-weight:600;border-right:1px solid var(--line)}
+th,td{padding:7px 8px;text-align:center;border-bottom:1px solid var(--border);white-space:nowrap}
+th:first-child,td:first-child{position:sticky;left:0;background:#1d1933;text-align:left;font-weight:600;border-right:1px solid var(--border)}
 thead th{color:var(--muted);font-weight:600}
-h2{font-size:1.05rem;margin:22px 0 8px}
+h2{font-family:var(--font-display);font-size:1.1rem;font-weight:700;margin:1.4rem 0 8px}
 .set{display:flex;gap:8px;margin-bottom:8px}
-.set input{flex:1;min-width:0;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--text);font:inherit}
-.set input.p{flex:0 0 64px;text-align:center}
-.btn{padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--text);font:inherit;font-weight:600;cursor:pointer}
-.btn.danger{color:var(--over)}
-.x{width:44px;flex:0 0 44px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--over);font-size:1.1rem;cursor:pointer}
-.hint{color:var(--muted);font-size:.85rem;margin:0 0 10px}
+.x{width:44px;flex:0 0 44px;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--red);font-size:1.1rem;cursor:pointer}
+.hint{font-size:12px;color:var(--muted);line-height:1.5;margin:0 0 10px}
+.btn-logout{display:block;margin:1.4rem auto 0}
 </style>
 </head>
 <body>
-<main>
-<h1>Pubgolf scorebord</h1>
-<p id="st" class="hint" style="margin:0 0 10px"></p>
-<form id="login" hidden><h2>Wachtwoord</h2><p class="hint">Vul het wachtwoord in dat je van de organisator hebt gekregen.</p><div class="set"><input id="pw" type="password" autocomplete="current-password" placeholder="Wachtwoord" aria-label="Wachtwoord"><button class="btn" type="submit">Openen</button></div><p id="perr" class="hint over"></p></form>
+<div class="card">
+<div class="logo"><span>PUB</span>GOLF ⛳</div>
+<p class="sub" id="st"></p>
+
+<form id="login" hidden>
+<label for="pw">Wachtwoord</label>
+<div class="pw-wrap"><input type="password" id="pw" placeholder="Wachtwoord..." autocomplete="current-password"><button type="button" class="pw-eye" id="eye" title="Wachtwoord tonen">👁️</button></div>
+<div class="err" id="perr"></div>
+<button class="btn btn-gold" type="submit">Meedoen →</button>
+</form>
+
 <div id="gate" hidden>
 <nav role="tablist">
 <button role="tab" data-v="score">Scoren</button>
@@ -65,28 +84,32 @@ h2{font-size:1.05rem;margin:22px 0 8px}
 <button role="tab" data-v="set">Instellingen</button>
 </nav>
 <div id="app"></div>
+<button class="btn-line btn-logout" id="lo">Uitloggen</button>
 </div>
-</main>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script>
-// === PLAK HIER JE FIREBASE-CONFIG (zie uitleg) ===
 const FB={apiKey:"AIzaSyCRRGJJV-w9jw8sUxPYoT4d2XXI7PSIaK8",authDomain:"pubgolf-df259.firebaseapp.com",databaseURL:"https://pubgolf-df259-default-rtdb.europe-west1.firebasedatabase.app",projectId:"pubgolf-df259",appId:"1:556743240473:web:5e24991e59433c2e47b388"};
-// =================================================
+const PASSWORD="pubgolf2026";
 const LOCAL=FB.apiKey.startsWith("PLAK");
-const def=()=>({teams:[1,2,3,4,5,6].map(i=>({id:"t"+i,name:"Team "+i})),holes:Array.from({length:16},(_,i)=>({name:"Kroeg "+(i+1),par:3})),scores:{}});
+const def=()=>({teams:[1,2,3,4,5,6].map(i=>({id:"t"+i,name:"Team "+i})),holes:Array.from({length:16},(_,i)=>({name:"Kroeg "+(i+1)})),scores:{}});
 let S=def(),V={view:"score",hole:0},db=null;
 const arr=x=>Array.isArray(x)?x.filter(Boolean):Object.values(x||{});
 try{const v=JSON.parse(localStorage.getItem("pubgolf-view"));if(v)V=v}catch(e){}
-if(LOCAL){try{const s=JSON.parse(localStorage.getItem("pubgolf-v2"));if(s&&s.teams)S=s}catch(e){}}
 const saveV=()=>{try{localStorage.setItem("pubgolf-view",JSON.stringify(V))}catch(e){}};
 const saveL=()=>{if(LOCAL)try{localStorage.setItem("pubgolf-v2",JSON.stringify(S))}catch(e){}};
-const st=document.getElementById("st");
-if(LOCAL){document.getElementById("gate").hidden=false;st.textContent="Lokale modus: scores worden niet gedeeld. Voeg de Firebase-config toe om te delen."}
-else{
+const $=id=>document.getElementById(id);
+const st=$("st"),gate=$("gate"),login=$("login"),perr=$("perr");
+$("eye").onclick=()=>{const i=$("pw");i.type=i.type==="password"?"text":"password"};
+$("lo").onclick=()=>{try{localStorage.removeItem("pg_ok")}catch(e){}location.reload()};
+
+if(LOCAL){
+try{const s=JSON.parse(localStorage.getItem("pubgolf-v2"));if(s&&s.teams)S=s}catch(e){}
+gate.hidden=false;$("lo").hidden=true;st.textContent="Lokale modus: scores worden niet gedeeld.";
+}else{
 firebase.initializeApp(FB);db=firebase.database();
-const PASSWORD="pubgolf2026";
-const gate=document.getElementById("gate"),login=document.getElementById("login"),perr=document.getElementById("perr");
 let started=false;
 function start(){
 if(started)return;started=true;
@@ -102,9 +125,10 @@ function openBord(){login.hidden=true;gate.hidden=false;start()}
 let ok=false;try{ok=localStorage.getItem("pg_ok")===PASSWORD}catch(e){}
 if(ok)openBord();else login.hidden=false;
 login.addEventListener("submit",e=>{e.preventDefault();
-if(document.getElementById("pw").value===PASSWORD){try{localStorage.setItem("pg_ok",PASSWORD)}catch(x){}perr.textContent="";openBord()}
+if($("pw").value===PASSWORD){try{localStorage.setItem("pg_ok",PASSWORD)}catch(x){}perr.textContent="";openBord()}
 else perr.textContent="Onjuist wachtwoord, probeer opnieuw."});
 }
+
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const get=(t,h)=>(S.scores[t]||{})[h];
 function wScore(t,h,v){
@@ -113,38 +137,36 @@ if(v==null)delete o[h];else o[h]=v;
 if(db){const r=db.ref(`bord/scores/${t}/${h}`);v==null?r.remove():r.set(v)}else saveL();
 }
 function wTeams(){db?db.ref("bord/teams").set(S.teams):saveL()}
-function wHoles(){db?db.ref("bord/holes").set(S.holes):saveL()}
-function stats(t){let tot=0,diff=0,n=0;S.holes.forEach((H,i)=>{const v=get(t.id,i);if(typeof v==="number"){tot+=v;diff+=v-H.par;n++}});return{tot,diff,n}}
-const fmt=d=>d>0?"+"+d:d===0?"0":String(d);
-const cls=d=>d<0?"under":d>0?"over":"";
-const app=document.getElementById("app");
+function wHoles(){db?db.ref("bord/holes").set(S.holes.map(h=>({name:h.name}))):saveL()}
+function stats(t){let tot=0,n=0;S.holes.forEach((H,i)=>{const v=get(t.id,i);if(typeof v==="number"){tot+=v;n++}});return{tot,n}}
+const app=$("app");
 function render(){
 document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===V.view));
 if(V.view==="score")score();else if(V.view==="stand")stand();else settings();
 }
 function score(){
 const H=S.holes[V.hole];
-let h=`<div class="hole"><button class="nb" data-a="prev" aria-label="Vorige kroeg">‹</button><div class="t"><b>${esc(H.name)}</b><span>Kroeg ${V.hole+1} van ${S.holes.length} · par ${H.par}</span></div><button class="nb" data-a="next" aria-label="Volgende kroeg">›</button></div>`;
+let h=`<div class="hole"><button class="nb" data-a="prev" aria-label="Vorige kroeg">‹</button><div class="t"><b>${esc(H.name)}</b><span>Kroeg ${V.hole+1} van ${S.holes.length}</span></div><button class="nb" data-a="next" aria-label="Volgende kroeg">›</button></div>`;
 S.teams.forEach(t=>{const v=get(t.id,V.hole);
 h+=`<div class="row"><span class="n">${esc(t.name)}</span><button class="step" data-a="dec" data-t="${t.id}" aria-label="Minder slokken ${esc(t.name)}">−</button><span class="val ${v==null?"empty":""}">${v==null?"–":v}</span><button class="step" data-a="inc" data-t="${t.id}" aria-label="Meer slokken ${esc(t.name)}">+</button></div>`});
-app.innerHTML=h+`<p class="hint">Vul het aantal slokken in. De eerste tik op + zet de score op par.</p>`;
+app.innerHTML=h+`<p class="hint">Tik op + voor elke slok. Het team met de minste slokken wint.</p>`;
 }
 function stand(){
-const r=S.teams.map(t=>({t,...stats(t)})).sort((a,b)=>(a.n===0)-(b.n===0)||a.diff-b.diff||a.tot-b.tot);
+const r=S.teams.map(t=>({t,...stats(t)})).sort((a,b)=>(a.n===0)-(b.n===0)||(a.tot/a.n||0)-(b.tot/b.n||0)||b.n-a.n);
 let h="";
-r.forEach((x,i)=>{h+=`<div class="rank ${i===0&&x.n?"first":""}"><span class="pos">${i+1}</span><div><div style="font-weight:600">${esc(x.t.name)}</div><div class="meta">${x.n} van ${S.holes.length} kroegen</div></div><span class="tot">${x.tot} sl.</span><span class="par ${cls(x.diff)}">${x.n?fmt(x.diff):"–"}</span></div>`});
+r.forEach((x,i)=>{const m=i===0?"🏆":i===1?"🥈":i===2?"🥉":i+1;
+h+=`<div class="sb-item ${i===0&&x.n?"first":""}"><span class="sb-rank">${m}</span><div class="sb-name"><b>${esc(x.t.name)}</b><small>${x.n} van ${S.holes.length} kroegen${x.n?" · gem. "+(x.tot/x.n).toFixed(1).replace(".",","):""}</small></div><span class="sb-pts">${x.tot}</span></div>`});
 h+=`<div class="wrap"><table><thead><tr><th>Team</th>${S.holes.map((_,i)=>`<th>${i+1}</th>`).join("")}<th>Tot</th></tr></thead><tbody>`;
-h+=`<tr><td style="color:var(--muted)">Par</td>${S.holes.map(x=>`<td style="color:var(--muted)">${x.par}</td>`).join("")}<td style="color:var(--muted)">${S.holes.reduce((a,x)=>a+x.par,0)}</td></tr>`;
-S.teams.forEach(t=>{const s=stats(t);h+=`<tr><td>${esc(t.name)}</td>${S.holes.map((H,i)=>{const v=get(t.id,i);return`<td class="${v==null?"":cls(v-H.par)}">${v==null?"·":v}</td>`}).join("")}<td><b>${s.tot}</b></td></tr>`});
+S.teams.forEach(t=>{const s=stats(t);h+=`<tr><td>${esc(t.name)}</td>${S.holes.map((H,i)=>{const v=get(t.id,i);return`<td>${v==null?"·":v}</td>`}).join("")}<td><b>${s.tot}</b></td></tr>`});
 app.innerHTML=h+`</tbody></table></div>`;
 }
 function settings(){
 let h=`<h2>Teams (max 10)</h2>`;
-S.teams.forEach(t=>{h+=`<div class="set"><input data-a="tname" data-t="${t.id}" value="${esc(t.name)}" aria-label="Teamnaam"><button class="x" data-a="deltm" data-t="${t.id}" aria-label="Verwijder ${esc(t.name)}">✕</button></div>`});
-if(S.teams.length<10)h+=`<button class="btn" data-a="addtm">Team toevoegen</button>`;
-h+=`<h2>Kroegen en par</h2><p class="hint">Naam van de kroeg, en par in slokken. Wijzigingen zien alle spelers direct.</p>`;
-S.holes.forEach((x,i)=>{h+=`<div class="set"><input data-a="hname" data-i="${i}" value="${esc(x.name)}" aria-label="Kroeg ${i+1}"><input class="p" type="number" min="1" max="20" inputmode="numeric" data-a="hpar" data-i="${i}" value="${x.par}" aria-label="Par kroeg ${i+1}"></div>`});
-h+=`<h2>Opnieuw beginnen</h2><button class="btn danger" data-a="reset">Alle scores wissen</button>`;
+S.teams.forEach(t=>{h+=`<div class="set"><input type="text" data-a="tname" data-t="${t.id}" value="${esc(t.name)}" aria-label="Teamnaam"><button class="x" data-a="deltm" data-t="${t.id}" aria-label="Verwijder ${esc(t.name)}">✕</button></div>`});
+if(S.teams.length<10)h+=`<button class="btn-line" data-a="addtm">Team toevoegen</button>`;
+h+=`<h2>Kroegen</h2><p class="hint">Wijzigingen zien alle spelers direct.</p>`;
+S.holes.forEach((x,i)=>{h+=`<div class="set"><input type="text" data-a="hname" data-i="${i}" value="${esc(x.name)}" aria-label="Kroeg ${i+1}"></div>`});
+h+=`<h2>Opnieuw beginnen</h2><button class="btn-line danger" data-a="reset">Alle scores wissen</button>`;
 app.innerHTML=h;
 }
 document.querySelector("nav").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;V.view=b.dataset.v;saveV();render()});
@@ -152,7 +174,7 @@ app.addEventListener("click",e=>{
 const b=e.target.closest("button");if(!b)return;const a=b.dataset.a,t=b.dataset.t;
 if(a==="prev"){V.hole=(V.hole+S.holes.length-1)%S.holes.length;saveV()}
 else if(a==="next"){V.hole=(V.hole+1)%S.holes.length;saveV()}
-else if(a==="inc"){const v=get(t,V.hole);wScore(t,V.hole,v==null?S.holes[V.hole].par:v+1)}
+else if(a==="inc"){const v=get(t,V.hole);wScore(t,V.hole,v==null?1:v+1)}
 else if(a==="dec"){const v=get(t,V.hole);if(v!=null)wScore(t,V.hole,v<=1?null:v-1)}
 else if(a==="addtm"){if(S.teams.length<10){S.teams.push({id:"t"+Date.now(),name:"Team "+(S.teams.length+1)});wTeams()}}
 else if(a==="deltm"){if(confirm("Dit team en de scores verwijderen?")){S.teams=S.teams.filter(x=>x.id!==t);delete S.scores[t];wTeams();if(db)db.ref(`bord/scores/${t}`).remove();else saveL()}}
@@ -164,8 +186,8 @@ app.addEventListener("change",e=>{
 const i=e.target,a=i.dataset.a;
 if(a==="tname"){S.teams.find(x=>x.id===i.dataset.t).name=i.value;wTeams()}
 else if(a==="hname"){S.holes[+i.dataset.i].name=i.value;wHoles()}
-else if(a==="hpar"){const v=parseInt(i.value,10);if(v>0){S.holes[+i.dataset.i].par=v;wHoles()}}
 });
+document.querySelector("nav").addEventListener("click",()=>{});
 render();
 </script>
 </body>
