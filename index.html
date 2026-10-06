@@ -159,8 +159,8 @@ app.innerHTML=h+`<p class="hint">Tik op + voor elke slok. Het team met de minste
 function stand(){
 const r=S.teams.map(t=>({t,...stats(t)})).sort((a,b)=>(a.n===0)-(b.n===0)||(a.tot/a.n||0)-(b.tot/b.n||0)||b.n-a.n);
 let h="";
-r.forEach((x,i)=>{const m=i+1;
-h+=`<div class="sb-item ${i===0&&x.n?"first":""}"><span class="sb-rank">${m}</span><div class="sb-name"><b>${esc(x.t.name)}</b><small>${x.n} van ${S.holes.length} kroegen${""}</small></div><span class="sb-pts">${x.tot}</span></div>`});
+r.forEach((x,i)=>{
+h+=`<div class="sb-item ${i===0&&x.n?"first":""}"><div class="sb-name"><b>${esc(x.t.name)}</b><small>${x.n} van ${S.holes.length} kroegen${""}</small></div><span class="sb-pts">${x.tot}</span></div>`});
 h+=`<div class="wrap"><table><thead><tr><th>Team</th>${S.holes.map((_,i)=>`<th>${i+1}</th>`).join("")}<th>Tot</th></tr></thead><tbody>`;
 S.teams.forEach(t=>{const s=stats(t);h+=`<tr><td>${esc(t.name)}</td>${S.holes.map((H,i)=>{const v=get(t.id,i);return`<td>${v==null?"·":v}</td>`}).join("")}<td><b>${s.tot}</b></td></tr>`});
 app.innerHTML=h+`</tbody></table></div>`;
