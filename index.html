@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>⛳ Pubgolf</title>
+<title>⛳ Pubgolf admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -17,6 +17,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opa
 @keyframes cardin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .logo{font-family:var(--font-display);font-weight:800;font-size:46px;letter-spacing:-0.02em;text-align:center}
 .logo span{color:var(--gold)}
+.logo small{display:block;font-family:var(--font-body);font-size:13px;font-weight:700;letter-spacing:0.3em;color:var(--muted);margin-top:2px}
 .sub{text-align:center;font-size:13px;color:var(--muted);margin:2px 0 1.4rem;min-height:1.2em}
 label{font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px}
 input{font-family:var(--font-body)}
@@ -68,7 +69,7 @@ h2{font-family:var(--font-display);font-size:1.1rem;font-weight:700;margin:1.4re
 </head>
 <body>
 <div class="card">
-<div class="logo"><span>PUB</span>GOLF ⛳</div>
+<div class="logo"><span>PUB</span>GOLF ⛳<small>ADMIN</small></div>
 <p class="sub" id="st"></p>
 
 <form id="login" hidden>
@@ -158,7 +159,7 @@ app.innerHTML=h+`<p class="hint">Tik op + voor elke slok. Het team met de minste
 function stand(){
 const r=S.teams.map(t=>({t,...stats(t)})).sort((a,b)=>(a.n===0)-(b.n===0)||(a.tot/a.n||0)-(b.tot/b.n||0)||b.n-a.n);
 let h="";
-r.forEach((x,i)=>{const m=i===0?"🏆":i===1?"🥈":i===2?"🥉":i+1;
+r.forEach((x,i)=>{const m=i+1;
 h+=`<div class="sb-item ${i===0&&x.n?"first":""}"><span class="sb-rank">${m}</span><div class="sb-name"><b>${esc(x.t.name)}</b><small>${x.n} van ${S.holes.length} kroegen${""}</small></div><span class="sb-pts">${x.tot}</span></div>`});
 h+=`<div class="wrap"><table><thead><tr><th>Team</th>${S.holes.map((_,i)=>`<th>${i+1}</th>`).join("")}<th>Tot</th></tr></thead><tbody>`;
 S.teams.forEach(t=>{const s=stats(t);h+=`<tr><td>${esc(t.name)}</td>${S.holes.map((H,i)=>{const v=get(t.id,i);return`<td>${v==null?"·":v}</td>`}).join("")}<td><b>${s.tot}</b></td></tr>`});
