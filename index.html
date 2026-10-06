@@ -63,6 +63,7 @@ h2{font-family:var(--font-display);font-size:1.1rem;font-weight:700;margin:1.4re
 .x{width:44px;flex:0 0 44px;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--red);font-size:1.1rem;cursor:pointer}
 .hint{font-size:12px;color:var(--muted);line-height:1.5;margin:0 0 10px}
 .btn-logout{display:block;margin:1.4rem auto 0}
+.copy{text-align:center;margin-top:1.6rem}
 </style>
 </head>
 <body>
@@ -71,6 +72,8 @@ h2{font-family:var(--font-display);font-size:1.1rem;font-weight:700;margin:1.4re
 <p class="sub" id="st"></p>
 
 <form id="login" hidden>
+<label for="room">Kamernaam</label>
+<input type="text" id="room" placeholder="Kamernaam..." autocomplete="off" autocapitalize="none" style="margin-bottom:1rem">
 <label for="pw">Wachtwoord</label>
 <div class="pw-wrap"><input type="password" id="pw" placeholder="Wachtwoord..." autocomplete="current-password"><button type="button" class="pw-eye" id="eye" title="Wachtwoord tonen">👁️</button></div>
 <div class="err" id="perr"></div>
@@ -86,13 +89,14 @@ h2{font-family:var(--font-display);font-size:1.1rem;font-weight:700;margin:1.4re
 <div id="app"></div>
 <button class="btn-line btn-logout" id="lo">Uitloggen</button>
 </div>
+<p class="hint copy">© 2026 — Mede mogelijk gemaakt door<br>Stijn Mostert</p>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script>
 const FB={apiKey:"AIzaSyCRRGJJV-w9jw8sUxPYoT4d2XXI7PSIaK8",authDomain:"pubgolf-df259.firebaseapp.com",databaseURL:"https://pubgolf-df259-default-rtdb.europe-west1.firebasedatabase.app",projectId:"pubgolf-df259",appId:"1:556743240473:web:5e24991e59433c2e47b388"};
-const PASSWORD="pubgolf2026";
+const ROOM="pubgolf2026",PASSWORD="Stijn123!",KEY=ROOM+"|"+PASSWORD;
 const LOCAL=FB.apiKey.startsWith("PLAK");
 const def=()=>({teams:[1,2,3,4,5,6].map(i=>({id:"t"+i,name:"Team "+i})),holes:Array.from({length:16},(_,i)=>({name:"Kroeg "+(i+1)})),scores:{}});
 let S=def(),V={view:"score",hole:0},db=null;
@@ -108,7 +112,7 @@ $("lo").onclick=()=>{try{localStorage.removeItem("pg_ok")}catch(e){}location.rel
 if(LOCAL){
 try{const s=JSON.parse(localStorage.getItem("pubgolf-v2"));if(s&&s.teams)S=s}catch(e){}
 gate.hidden=false;$("lo").hidden=true;st.textContent="Lokale modus: scores worden niet gedeeld.";
-}else{
+}else if(typeof firebase==="undefined"){st.textContent="Firebase kon niet laden. Open de pagina via de GitHub-link en zet je adblocker uit."}else{
 firebase.initializeApp(FB);db=firebase.database();
 let started=false;
 function start(){
@@ -122,11 +126,11 @@ if(V.hole>=S.holes.length)V.hole=0;
 if(!(document.activeElement&&document.activeElement.tagName==="INPUT"))render();
 });}
 function openBord(){login.hidden=true;gate.hidden=false;start()}
-let ok=false;try{ok=localStorage.getItem("pg_ok")===PASSWORD}catch(e){}
+let ok=false;try{ok=localStorage.getItem("pg_ok")===KEY}catch(e){}
 if(ok)openBord();else login.hidden=false;
 login.addEventListener("submit",e=>{e.preventDefault();
-if($("pw").value===PASSWORD){try{localStorage.setItem("pg_ok",PASSWORD)}catch(x){}perr.textContent="";openBord()}
-else perr.textContent="Onjuist wachtwoord, probeer opnieuw."});
+if($("room").value.trim().toLowerCase()===ROOM&&$("pw").value===PASSWORD){try{localStorage.setItem("pg_ok",KEY)}catch(x){}perr.textContent="";openBord()}
+else perr.textContent="Onjuiste kamernaam of wachtwoord, probeer opnieuw."});
 }
 
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -155,7 +159,7 @@ function stand(){
 const r=S.teams.map(t=>({t,...stats(t)})).sort((a,b)=>(a.n===0)-(b.n===0)||(a.tot/a.n||0)-(b.tot/b.n||0)||b.n-a.n);
 let h="";
 r.forEach((x,i)=>{const m=i===0?"🏆":i===1?"🥈":i===2?"🥉":i+1;
-h+=`<div class="sb-item ${i===0&&x.n?"first":""}"><span class="sb-rank">${m}</span><div class="sb-name"><b>${esc(x.t.name)}</b><small>${x.n} van ${S.holes.length} kroegen${x.n?" · gem. "+(x.tot/x.n).toFixed(1).replace(".",","):""}</small></div><span class="sb-pts">${x.tot}</span></div>`});
+h+=`<div class="sb-item ${i===0&&x.n?"first":""}"><span class="sb-rank">${m}</span><div class="sb-name"><b>${esc(x.t.name)}</b><small>${x.n} van ${S.holes.length} kroegen${""}</small></div><span class="sb-pts">${x.tot}</span></div>`});
 h+=`<div class="wrap"><table><thead><tr><th>Team</th>${S.holes.map((_,i)=>`<th>${i+1}</th>`).join("")}<th>Tot</th></tr></thead><tbody>`;
 S.teams.forEach(t=>{const s=stats(t);h+=`<tr><td>${esc(t.name)}</td>${S.holes.map((H,i)=>{const v=get(t.id,i);return`<td>${v==null?"·":v}</td>`}).join("")}<td><b>${s.tot}</b></td></tr>`});
 app.innerHTML=h+`</tbody></table></div>`;
