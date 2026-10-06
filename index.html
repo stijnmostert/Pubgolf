@@ -104,7 +104,7 @@ if(u){login.hidden=true;gate.hidden=false;start()}
 else{login.hidden=false;gate.hidden=true;st.textContent=""}
 });
 login.addEventListener("submit",e=>{e.preventDefault();perr.textContent="";
-firebase.auth().signInWithEmailAndPassword(EMAIL,document.getElementById("pw").value).catch(()=>{perr.textContent="Dat wachtwoord klopt niet."})});
+firebase.auth().signInWithEmailAndPassword(EMAIL,document.getElementById("pw").value).catch(err=>{const c=err.code||"";perr.textContent=(c==="auth/invalid-credential"||c==="auth/wrong-password"||c==="auth/user-not-found")?"Dat wachtwoord klopt niet.":"Inloggen mislukt: "+c})});
 }
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const get=(t,h)=>(S.scores[t]||{})[h];
