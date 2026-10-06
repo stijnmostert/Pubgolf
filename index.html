@@ -69,7 +69,6 @@ h2{font-size:1.05rem;margin:22px 0 8px}
 </main>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script>
 // === PLAK HIER JE FIREBASE-CONFIG (zie uitleg) ===
 const FB={apiKey:"AIzaSyCRRGJJV-w9jw8sUxPYoT4d2XXI7PSIaK8",authDomain:"pubgolf-df259.firebaseapp.com",databaseURL:"https://pubgolf-df259-default-rtdb.europe-west1.firebasedatabase.app",projectId:"pubgolf-df259",appId:"1:556743240473:web:5e24991e59433c2e47b388"};
@@ -86,7 +85,7 @@ const st=document.getElementById("st");
 if(LOCAL){document.getElementById("gate").hidden=false;st.textContent="Lokale modus: scores worden niet gedeeld. Voeg de Firebase-config toe om te delen."}
 else{
 firebase.initializeApp(FB);db=firebase.database();
-const EMAIL="pubgolf@pubgolf.app";
+const PASSWORD="pubgolf2026";
 const gate=document.getElementById("gate"),login=document.getElementById("login"),perr=document.getElementById("perr");
 let started=false;
 function start(){
@@ -99,12 +98,12 @@ S.teams=arr(d.teams);S.holes=arr(d.holes);S.scores=d.scores||{};
 if(V.hole>=S.holes.length)V.hole=0;
 if(!(document.activeElement&&document.activeElement.tagName==="INPUT"))render();
 });}
-firebase.auth().onAuthStateChanged(u=>{
-if(u){login.hidden=true;gate.hidden=false;start()}
-else{login.hidden=false;gate.hidden=true;st.textContent=""}
-});
-login.addEventListener("submit",e=>{e.preventDefault();perr.textContent="";
-firebase.auth().signInWithEmailAndPassword(EMAIL,document.getElementById("pw").value).catch(err=>{const c=err.code||"";perr.textContent=(c==="auth/invalid-credential"||c==="auth/wrong-password"||c==="auth/user-not-found")?"Dat wachtwoord klopt niet.":"Inloggen mislukt: "+c})});
+function openBord(){login.hidden=true;gate.hidden=false;start()}
+let ok=false;try{ok=localStorage.getItem("pg_ok")===PASSWORD}catch(e){}
+if(ok)openBord();else login.hidden=false;
+login.addEventListener("submit",e=>{e.preventDefault();
+if(document.getElementById("pw").value===PASSWORD){try{localStorage.setItem("pg_ok",PASSWORD)}catch(x){}perr.textContent="";openBord()}
+else perr.textContent="Onjuist wachtwoord, probeer opnieuw."});
 }
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const get=(t,h)=>(S.scores[t]||{})[h];
