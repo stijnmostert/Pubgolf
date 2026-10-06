@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>⛳ Pubgolf stand</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#f3b65c;--gold2:#ffcd86;--cream:#f4efe6;--muted:#a09aba;--border:rgba(255,255,255,0.09);--font-display:'Bricolage Grotesque',sans-serif;--font-body:'Hanken Grotesk',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background-color:#130f1e;background-image:radial-gradient(900px 520px at 8% -12%,rgba(243,182,92,0.14),transparent 60%),radial-gradient(820px 640px at 108% 112%,rgba(125,92,218,0.24),transparent 55%);background-attachment:fixed;color:var(--cream);font-family:var(--font-body);min-height:100vh;display:flex;justify-content:center;padding:1.5rem;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.card{position:relative;z-index:1;width:100%;max-width:480px;align-self:flex-start;margin:auto 0;background:linear-gradient(180deg,rgba(40,34,66,0.7),rgba(24,20,42,0.7));backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:24px;box-shadow:0 36px 90px -36px rgba(0,0,0,0.8);padding:1.75rem 1.4rem;animation:cardin .5s ease both}
+@keyframes cardin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.logo{font-family:var(--font-display);font-weight:800;font-size:46px;letter-spacing:-0.02em;text-align:center}
+.logo span{color:var(--gold)}
+.sub{text-align:center;font-size:13px;color:var(--muted);margin:2px 0 1.4rem;min-height:1.2em}
+.sb-title{font-family:var(--font-display);font-weight:800;font-size:1.6rem;text-align:center;margin-bottom:1rem}
+.sb-title span{color:var(--gold)}
+.sb-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,0.04);margin-bottom:8px}
+.sb-item.first{border-color:var(--gold);background:rgba(243,182,92,0.12)}
+.sb-rank{font-size:18px;width:28px;text-align:center}
+.sb-name{flex:1;min-width:0}.sb-name b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-name small{color:var(--muted);font-size:12px}
+.sb-pts{font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:var(--gold)}
+.wrap{overflow-x:auto;margin-top:1.2rem;border:1px solid var(--border);border-radius:14px}
+table{border-collapse:collapse;width:100%;font-size:.85rem}
+th,td{padding:7px 8px;text-align:center;border-bottom:1px solid var(--border);white-space:nowrap}
+th:first-child,td:first-child{position:sticky;left:0;background:#1d1933;text-align:left;font-weight:600;border-right:1px solid var(--border)}
+thead th{color:var(--muted);font-weight:600}
+.hint{font-size:12px;color:var(--muted);line-height:1.5;text-align:center;margin-top:1.2rem}
+</style>
+</head>
+<body>
+<div class="card">
+<div class="logo"><span>PUB</span>GOLF ⛳</div>
+<p class="sub" id="st">Verbinden…</p>
+<div class="sb-title">Score<span>bord</span> 🏆</div>
+<div id="app"></div>
+<p class="hint">Alleen kijken. De stand wordt live bijgewerkt.</p>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+const FB={apiKey:"AIzaSyCRRGJJV-w9jw8sUxPYoT4d2XXI7PSIaK8",authDomain:"pubgolf-df259.firebaseapp.com",databaseURL:"https://pubgolf-df259-default-rtdb.europe-west1.firebasedatabase.app",projectId:"pubgolf-df259",appId:"1:556743240473:web:5e24991e59433c2e47b388"};
+FB.appId="1:556743240473:web:5e24991e59433c2e47b388";
+const arr=x=>Array.isArray(x)?x.filter(Boolean):Object.values(x||{});
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const app=document.getElementById("app"),st=document.getElementById("st");
+firebase.initializeApp(FB);
+const db=firebase.database();
+db.ref(".info/connected").on("value",s=>{st.textContent=s.val()?"Live verbonden":"Geen verbinding, we proberen opnieuw…"});
+db.ref("bord").on("value",snap=>{
+const d=snap.val();
+if(!d){app.innerHTML='<p class="hint">Nog geen scores.</p>';return}
+const teams=arr(d.teams),holes=arr(d.holes),scores=d.scores||{};
+const get=(t,h)=>(scores[t]||{})[h];
+const stats=t=>{let tot=0,n=0;holes.forEach((_,i)=>{const v=get(t.id,i);if(typeof v==="number"){tot+=v;n++}});return{tot,n}};
+const r=teams.map(t=>({t,...stats(t)})).sort((a,b)=>(a.n===0)-(b.n===0)||(a.tot/a.n||0)-(b.tot/b.n||0)||b.n-a.n);
+let h="";
+r.forEach((x,i)=>{const m=i===0?"🏆":i===1?"🥈":i===2?"🥉":i+1;
+h+=`<div class="sb-item ${i===0&&x.n?"first":""}"><span class="sb-rank">${m}</span><div class="sb-name"><b>${esc(x.t.name)}</b><small>${x.n} van ${holes.length} kroegen${x.n?" · gem. "+(x.tot/x.n).toFixed(1).replace(".",","):""}</small></div><span class="sb-pts">${x.tot}</span></div>`});
+h+=`<div class="wrap"><table><thead><tr><th>Team</th>${holes.map((_,i)=>`<th>${i+1}</th>`).join("")}<th>Tot</th></tr></thead><tbody>`;
+teams.forEach(t=>{const s=stats(t);h+=`<tr><td>${esc(t.name)}</td>${holes.map((_,i)=>{const v=get(t.id,i);return`<td>${v==null?"·":v}</td>`}).join("")}<td><b>${s.tot}</b></td></tr>`});
+app.innerHTML=h+`</tbody></table></div>`;
+});
+</script>
+</body>
+</html>
