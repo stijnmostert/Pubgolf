@@ -31,15 +31,36 @@ th,td{padding:7px 8px;text-align:center;border-bottom:1px solid var(--border);wh
 th:first-child,td:first-child{position:sticky;left:0;background:#1d1933;text-align:left;font-weight:600;border-right:1px solid var(--border)}
 thead th{color:var(--muted);font-weight:600}
 .hint{font-size:12px;color:var(--muted);line-height:1.5;text-align:center;margin-top:1.2rem}
+.copy{margin-top:1.6rem}
+[hidden]{display:none!important}
+label{font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px}
+input{width:100%;background:rgba(0,0,0,0.28);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--cream);font-size:15px;font-family:var(--font-body);outline:none;margin-bottom:1rem}
+input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(243,182,92,0.16)}
+input::placeholder{color:var(--muted)}
+.pw-wrap{position:relative}.pw-wrap input{padding-right:44px}
+.pw-eye{position:absolute;right:8px;top:14px;background:transparent;border:none;cursor:pointer;font-size:18px;padding:4px}
+.err{color:#ff8f8f;font-size:13px;margin-bottom:.75rem;min-height:1em}
+.btn{width:100%;padding:13px;font-size:15px;font-weight:700;font-family:var(--font-body);border-radius:14px;border:none;cursor:pointer;background:linear-gradient(180deg,var(--gold2),var(--gold));color:#2a1c05;box-shadow:0 12px 26px -12px rgba(243,182,92,0.65)}
 </style>
 </head>
 <body>
 <div class="card">
 <div class="logo"><span>PUB</span>GOLF ⛳</div>
-<p class="sub" id="st">Verbinden…</p>
+<p class="sub" id="st"></p>
+<form id="login" hidden>
+<label for="room">Kamernaam</label>
+<input type="text" id="room" placeholder="Kamernaam..." autocomplete="off" autocapitalize="none">
+<label for="pw">Wachtwoord</label>
+<div class="pw-wrap"><input type="password" id="pw" placeholder="Wachtwoord..." autocomplete="current-password"><button type="button" class="pw-eye" id="eye" title="Wachtwoord tonen">👁️</button></div>
+<div class="err" id="perr"></div>
+<button class="btn" type="submit">Meedoen →</button>
+</form>
+<div id="gate" hidden>
 <div class="sb-title">Score<span>bord</span> 🏆</div>
 <div id="app"></div>
 <p class="hint">Alleen kijken. De stand wordt live bijgewerkt.</p>
+</div>
+<p class="hint copy">© 2026 — Mede mogelijk gemaakt door<br>Stijn Mostert</p>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -50,8 +71,11 @@ FB.appId="1:556743240473:web:5e24991e59433c2e47b388";
 const arr=x=>Array.isArray(x)?x.filter(Boolean):Object.values(x||{});
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const app=document.getElementById("app"),st=document.getElementById("st");
-firebase.initializeApp(FB);
-const db=firebase.database();
+const db=typeof firebase!=="undefined"?(firebase.initializeApp(FB),firebase.database()):null;
+let started=false;
+function start(){
+if(started)return;started=true;
+if(!db){st.textContent="Firebase kon niet laden. Open de pagina via de GitHub-link en zet je adblocker uit.";return}
 db.ref(".info/connected").on("value",s=>{st.textContent=s.val()?"Live verbonden":"Geen verbinding, we proberen opnieuw…"});
 db.ref("bord").on("value",snap=>{
 const d=snap.val();
@@ -62,11 +86,21 @@ const stats=t=>{let tot=0,n=0;holes.forEach((_,i)=>{const v=get(t.id,i);if(typeo
 const r=teams.map(t=>({t,...stats(t)})).sort((a,b)=>(a.n===0)-(b.n===0)||(a.tot/a.n||0)-(b.tot/b.n||0)||b.n-a.n);
 let h="";
 r.forEach((x,i)=>{const m=i===0?"🏆":i===1?"🥈":i===2?"🥉":i+1;
-h+=`<div class="sb-item ${i===0&&x.n?"first":""}"><span class="sb-rank">${m}</span><div class="sb-name"><b>${esc(x.t.name)}</b><small>${x.n} van ${holes.length} kroegen${x.n?" · gem. "+(x.tot/x.n).toFixed(1).replace(".",","):""}</small></div><span class="sb-pts">${x.tot}</span></div>`});
+h+=`<div class="sb-item ${i===0&&x.n?"first":""}"><span class="sb-rank">${m}</span><div class="sb-name"><b>${esc(x.t.name)}</b><small>${x.n} van ${holes.length} kroegen${""}</small></div><span class="sb-pts">${x.tot}</span></div>`});
 h+=`<div class="wrap"><table><thead><tr><th>Team</th>${holes.map((_,i)=>`<th>${i+1}</th>`).join("")}<th>Tot</th></tr></thead><tbody>`;
 teams.forEach(t=>{const s=stats(t);h+=`<tr><td>${esc(t.name)}</td>${holes.map((_,i)=>{const v=get(t.id,i);return`<td>${v==null?"·":v}</td>`}).join("")}<td><b>${s.tot}</b></td></tr>`});
 app.innerHTML=h+`</tbody></table></div>`;
 });
+}
+const ROOM="pubgolf2026",PASSWORD="Stijn123!",KEY=ROOM+"|"+PASSWORD;
+const gate=document.getElementById("gate"),login=document.getElementById("login"),perr=document.getElementById("perr");
+document.getElementById("eye").onclick=()=>{const i=document.getElementById("pw");i.type=i.type==="password"?"text":"password"};
+function openBord(){login.hidden=true;gate.hidden=false;start()}
+let ok=false;try{ok=localStorage.getItem("pg_ok")===KEY}catch(e){}
+if(ok)openBord();else login.hidden=false;
+login.addEventListener("submit",e=>{e.preventDefault();
+if(document.getElementById("room").value.trim().toLowerCase()===ROOM&&document.getElementById("pw").value===PASSWORD){try{localStorage.setItem("pg_ok",KEY)}catch(x){}perr.textContent="";openBord()}
+else perr.textContent="Onjuiste kamernaam of wachtwoord, probeer opnieuw."});
 </script>
 </body>
 </html>
