@@ -89,8 +89,8 @@ const get=(t,h)=>(scores[t]||{})[h];
 const stats=t=>{let tot=0,n=0;holes.forEach((_,i)=>{const v=get(t.id,i);if(typeof v==="number"){tot+=v;n++}});return{tot,n}};
 const r=teams.map(t=>({t,...stats(t)})).sort((a,b)=>(a.n===0)-(b.n===0)||(a.tot/a.n||0)-(b.tot/b.n||0)||b.n-a.n);
 let h="";
-r.forEach((x,i)=>{const m=i+1;
-h+=`<div class="sb-item ${i===0&&x.n?"first":""}"><span class="sb-rank">${m}</span><div class="sb-name"><b>${esc(x.t.name)}</b><small>${x.n} van ${holes.length} kroegen${""}</small></div><span class="sb-pts">${x.tot}</span></div>`});
+r.forEach((x,i)=>{
+h+=`<div class="sb-item ${i===0&&x.n?"first":""}"><div class="sb-name"><b>${esc(x.t.name)}</b><small>${x.n} van ${holes.length} kroegen${""}</small></div><span class="sb-pts">${x.tot}</span></div>`});
 h+=`<div class="wrap"><table><thead><tr><th>Team</th>${holes.map((_,i)=>`<th>${i+1}</th>`).join("")}<th>Tot</th></tr></thead><tbody>`;
 teams.forEach(t=>{const s=stats(t);h+=`<tr><td>${esc(t.name)}</td>${holes.map((_,i)=>{const v=get(t.id,i);return`<td>${v==null?"·":v}</td>`}).join("")}<td><b>${s.tot}</b></td></tr>`});
 app.innerHTML=h+`</tbody></table></div>`;
