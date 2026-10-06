@@ -164,7 +164,7 @@ function settings(){
 let h=`<h2>Teams (max 10)</h2>`;
 S.teams.forEach(t=>{h+=`<div class="set"><input type="text" data-a="tname" data-t="${t.id}" value="${esc(t.name)}" aria-label="Teamnaam"><button class="x" data-a="deltm" data-t="${t.id}" aria-label="Verwijder ${esc(t.name)}">✕</button></div>`});
 if(S.teams.length<10)h+=`<button class="btn-line" data-a="addtm">Team toevoegen</button>`;
-h+=`<h2>Opnieuw beginnen</h2><button class="btn-line danger" data-a="reset">Alle scores wissen</button>`;
+h+=`<h2>Opnieuw beginnen</h2><button class="btn-line danger" data-a="reset">Alle scores en namen wissen</button>`;
 app.innerHTML=h;
 }
 document.querySelector("nav").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;V.view=b.dataset.v;saveV();render()});
@@ -176,7 +176,7 @@ else if(a==="inc"){const v=get(t,V.hole);wScore(t,V.hole,v==null?1:v+1)}
 else if(a==="dec"){const v=get(t,V.hole);if(v!=null)wScore(t,V.hole,v<=1?null:v-1)}
 else if(a==="addtm"){if(S.teams.length<10){S.teams.push({id:"t"+Date.now(),name:"Team "+(S.teams.length+1)});wTeams()}}
 else if(a==="deltm"){if(confirm("Dit team en de scores verwijderen?")){S.teams=S.teams.filter(x=>x.id!==t);delete S.scores[t];wTeams();if(db)db.ref(`bord/scores/${t}`).remove();else saveL()}}
-else if(a==="reset"){if(confirm("Alle scores wissen voor iedereen?")){S.scores={};if(db)db.ref("bord/scores").remove();else saveL()}}
+else if(a==="reset"){if(confirm("Alle scores en teamnamen wissen voor iedereen?")){const x=def();S.scores={};S.teams=x.teams;if(db)db.ref("bord").update({scores:null,teams:x.teams});else saveL()}}
 else return;
 render();
 });
