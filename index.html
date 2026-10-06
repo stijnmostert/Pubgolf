@@ -92,7 +92,7 @@ h2{font-family:var(--font-display);font-size:1.1rem;font-weight:700;margin:1.4re
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script>
 const FB={apiKey:"AIzaSyCRRGJJV-w9jw8sUxPYoT4d2XXI7PSIaK8",authDomain:"pubgolf-df259.firebaseapp.com",databaseURL:"https://pubgolf-df259-default-rtdb.europe-west1.firebasedatabase.app",projectId:"pubgolf-df259",appId:"1:556743240473:web:5e24991e59433c2e47b388"};
-const PASSWORD="Stijn123!";
+const PASSWORD="pubgolf2026";
 const LOCAL=FB.apiKey.startsWith("PLAK");
 const def=()=>({teams:[1,2,3,4,5,6].map(i=>({id:"t"+i,name:"Team "+i})),holes:Array.from({length:16},(_,i)=>({name:"Kroeg "+(i+1)})),scores:{}});
 let S=def(),V={view:"score",hole:0},db=null;
@@ -164,8 +164,6 @@ function settings(){
 let h=`<h2>Teams (max 10)</h2>`;
 S.teams.forEach(t=>{h+=`<div class="set"><input type="text" data-a="tname" data-t="${t.id}" value="${esc(t.name)}" aria-label="Teamnaam"><button class="x" data-a="deltm" data-t="${t.id}" aria-label="Verwijder ${esc(t.name)}">✕</button></div>`});
 if(S.teams.length<10)h+=`<button class="btn-line" data-a="addtm">Team toevoegen</button>`;
-h+=`<h2>Kroegen</h2><p class="hint">Wijzigingen zien alle spelers direct.</p>`;
-S.holes.forEach((x,i)=>{h+=`<div class="set"><input type="text" data-a="hname" data-i="${i}" value="${esc(x.name)}" aria-label="Kroeg ${i+1}"></div>`});
 h+=`<h2>Opnieuw beginnen</h2><button class="btn-line danger" data-a="reset">Alle scores wissen</button>`;
 app.innerHTML=h;
 }
@@ -185,7 +183,6 @@ render();
 app.addEventListener("change",e=>{
 const i=e.target,a=i.dataset.a;
 if(a==="tname"){S.teams.find(x=>x.id===i.dataset.t).name=i.value;wTeams()}
-else if(a==="hname"){S.holes[+i.dataset.i].name=i.value;wHoles()}
 });
 document.querySelector("nav").addEventListener("click",()=>{});
 render();
