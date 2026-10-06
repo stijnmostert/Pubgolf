@@ -12,6 +12,7 @@ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:en
 :root[data-theme="dark"]{--bg:#14231d;--surface:#1d3329;--line:#2f4a3d;--text:#ece8dc;--muted:#9bb0a4;--accent:#d4a83c;--accent-bg:#3a3318;--under:#7fd28f;--over:#ef8a6b}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--text);font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.4}
 main{max-width:640px;margin:0 auto;padding:16px 14px 40px}
 h1{font-size:1.5rem;font-weight:800;margin:4px 0 12px}
@@ -56,15 +57,19 @@ h2{font-size:1.05rem;margin:22px 0 8px}
 <main>
 <h1>Pubgolf scorebord</h1>
 <p id="st" class="hint" style="margin:0 0 10px"></p>
+<form id="login" hidden><h2>Wachtwoord</h2><p class="hint">Vul het wachtwoord in dat je van de organisator hebt gekregen.</p><div class="set"><input id="pw" type="password" autocomplete="current-password" placeholder="Wachtwoord" aria-label="Wachtwoord"><button class="btn" type="submit">Openen</button></div><p id="perr" class="hint over"></p></form>
+<div id="gate" hidden>
 <nav role="tablist">
 <button role="tab" data-v="score">Scoren</button>
 <button role="tab" data-v="stand">Stand</button>
 <button role="tab" data-v="set">Instellingen</button>
 </nav>
 <div id="app"></div>
+</div>
 </main>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script>
 // === PLAK HIER JE FIREBASE-CONFIG (zie uitleg) ===
 const FB={apiKey:"AIzaSyCRRGJJV-w9jw8sUxPYoT4d2XXI7PSIaK8",authDomain:"pubgolf-df259.firebaseapp.com",databaseURL:"https://pubgolf-df259-default-rtdb.europe-west1.firebasedatabase.app",projectId:"pubgolf-df259",appId:"1:556743240473:web:5e24991e59433c2e47b388"};
@@ -78,9 +83,14 @@ if(LOCAL){try{const s=JSON.parse(localStorage.getItem("pubgolf-v2"));if(s&&s.tea
 const saveV=()=>{try{localStorage.setItem("pubgolf-view",JSON.stringify(V))}catch(e){}};
 const saveL=()=>{if(LOCAL)try{localStorage.setItem("pubgolf-v2",JSON.stringify(S))}catch(e){}};
 const st=document.getElementById("st");
-if(LOCAL){st.textContent="Lokale modus: scores worden niet gedeeld. Voeg de Firebase-config toe om te delen."}
+if(LOCAL){document.getElementById("gate").hidden=false;st.textContent="Lokale modus: scores worden niet gedeeld. Voeg de Firebase-config toe om te delen."}
 else{
 firebase.initializeApp(FB);db=firebase.database();
+const EMAIL="pubgolf@pubgolf.app";
+const gate=document.getElementById("gate"),login=document.getElementById("login"),perr=document.getElementById("perr");
+let started=false;
+function start(){
+if(started)return;started=true;
 db.ref(".info/connected").on("value",s=>{st.textContent=s.val()?"Live verbonden: iedereen ziet dezelfde stand":"Geen verbinding, we proberen opnieuw…"});
 db.ref("bord").on("value",snap=>{
 const d=snap.val();
@@ -89,6 +99,13 @@ S.teams=arr(d.teams);S.holes=arr(d.holes);S.scores=d.scores||{};
 if(V.hole>=S.holes.length)V.hole=0;
 if(!(document.activeElement&&document.activeElement.tagName==="INPUT"))render();
 });}
+firebase.auth().onAuthStateChanged(u=>{
+if(u){login.hidden=true;gate.hidden=false;start()}
+else{login.hidden=false;gate.hidden=true;st.textContent=""}
+});
+login.addEventListener("submit",e=>{e.preventDefault();perr.textContent="";
+firebase.auth().signInWithEmailAndPassword(EMAIL,document.getElementById("pw").value).catch(()=>{perr.textContent="Dat wachtwoord klopt niet."})});
+}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const get=(t,h)=>(S.scores[t]||{})[h];
 function wScore(t,h,v){
