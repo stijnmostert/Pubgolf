@@ -87,7 +87,7 @@ if(!d){app.innerHTML='<p class="hint">Nog geen scores.</p>';return}
 const teams=arr(d.teams),holes=arr(d.holes),scores=d.scores||{};
 const get=(t,h)=>(scores[t]||{})[h];
 const stats=t=>{let tot=0,n=0;holes.forEach((_,i)=>{const v=get(t.id,i);if(typeof v==="number"){tot+=v;n++}});return{tot,n}};
-const r=teams.map(t=>({t,...stats(t)})).sort((a,b)=>(a.n===0)-(b.n===0)||(a.tot/a.n||0)-(b.tot/b.n||0)||b.n-a.n);
+const r=teams.map(t=>({t,...stats(t)})).sort((a,b)=>a.tot-b.tot);
 let h="";
 r.forEach((x,i)=>{
 h+=`<div class="sb-item ${i===0&&x.n?"first":""}"><div class="sb-name"><b>${esc(x.t.name)}</b><small>${x.n} van ${holes.length} kroegen${""}</small></div><span class="sb-pts">${x.tot}</span></div>`});
