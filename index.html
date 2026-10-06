@@ -55,6 +55,7 @@ h2{font-size:1.05rem;margin:22px 0 8px}
 <body>
 <main>
 <h1>Pubgolf scorebord</h1>
+<p id="st" class="hint" style="margin:0 0 10px"></p>
 <nav role="tablist">
 <button role="tab" data-v="score">Scoren</button>
 <button role="tab" data-v="stand">Stand</button>
@@ -62,32 +63,53 @@ h2{font-size:1.05rem;margin:22px 0 8px}
 </nav>
 <div id="app"></div>
 </main>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script>
-const KEY="pubgolf-v1";
-const def=()=>({view:"score",hole:0,
-teams:[1,2,3,4,5,6].map(i=>({id:"t"+i,name:"Team "+i})),
-holes:Array.from({length:16},(_,i)=>({name:"Kroeg "+(i+1),par:3})),
-scores:{}});
-let S;
-try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
-if(!S||!S.teams)S=def();
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+// === PLAK HIER JE FIREBASE-CONFIG (zie uitleg) ===
+const FB={apiKey:"AIzaSyCRRGJJV-w9jw8sUxPYoT4d2XXI7PSIaK8",authDomain:"pubgolf-df259.firebaseapp.com",databaseURL:"https://pubgolf-df259-default-rtdb.europe-west1.firebasedatabase.app",projectId:"pubgolf-df259",appId:"1:556743240473:web:5e24991e59433c2e47b388"};
+// =================================================
+const LOCAL=FB.apiKey.startsWith("PLAK");
+const def=()=>({teams:[1,2,3,4,5,6].map(i=>({id:"t"+i,name:"Team "+i})),holes:Array.from({length:16},(_,i)=>({name:"Kroeg "+(i+1),par:3})),scores:{}});
+let S=def(),V={view:"score",hole:0},db=null;
+const arr=x=>Array.isArray(x)?x.filter(Boolean):Object.values(x||{});
+try{const v=JSON.parse(localStorage.getItem("pubgolf-view"));if(v)V=v}catch(e){}
+if(LOCAL){try{const s=JSON.parse(localStorage.getItem("pubgolf-v2"));if(s&&s.teams)S=s}catch(e){}}
+const saveV=()=>{try{localStorage.setItem("pubgolf-view",JSON.stringify(V))}catch(e){}};
+const saveL=()=>{if(LOCAL)try{localStorage.setItem("pubgolf-v2",JSON.stringify(S))}catch(e){}};
+const st=document.getElementById("st");
+if(LOCAL){st.textContent="Lokale modus: scores worden niet gedeeld. Voeg de Firebase-config toe om te delen."}
+else{
+firebase.initializeApp(FB);db=firebase.database();
+db.ref(".info/connected").on("value",s=>{st.textContent=s.val()?"Live verbonden: iedereen ziet dezelfde stand":"Geen verbinding, we proberen opnieuw…"});
+db.ref("bord").on("value",snap=>{
+const d=snap.val();
+if(!d){const x=def();db.ref("bord").set({teams:x.teams,holes:x.holes});return}
+S.teams=arr(d.teams);S.holes=arr(d.holes);S.scores=d.scores||{};
+if(V.hole>=S.holes.length)V.hole=0;
+if(!(document.activeElement&&document.activeElement.tagName==="INPUT"))render();
+});}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const get=(t,h)=>(S.scores[t]||[])[h];
-function set(t,h,v){const a=S.scores[t]||(S.scores[t]=[]);a[h]=v;save()}
+const get=(t,h)=>(S.scores[t]||{})[h];
+function wScore(t,h,v){
+const o=S.scores[t]||(S.scores[t]={});
+if(v==null)delete o[h];else o[h]=v;
+if(db){const r=db.ref(`bord/scores/${t}/${h}`);v==null?r.remove():r.set(v)}else saveL();
+}
+function wTeams(){db?db.ref("bord/teams").set(S.teams):saveL()}
+function wHoles(){db?db.ref("bord/holes").set(S.holes):saveL()}
 function stats(t){let tot=0,diff=0,n=0;S.holes.forEach((H,i)=>{const v=get(t.id,i);if(typeof v==="number"){tot+=v;diff+=v-H.par;n++}});return{tot,diff,n}}
 const fmt=d=>d>0?"+"+d:d===0?"0":String(d);
 const cls=d=>d<0?"under":d>0?"over":"";
 const app=document.getElementById("app");
-
 function render(){
-document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===S.view));
-if(S.view==="score")score();else if(S.view==="stand")stand();else settings();
+document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===V.view));
+if(V.view==="score")score();else if(V.view==="stand")stand();else settings();
 }
 function score(){
-const H=S.holes[S.hole];
-let h=`<div class="hole"><button class="nb" data-a="prev" aria-label="Vorige kroeg">‹</button><div class="t"><b>${esc(H.name)}</b><span>Kroeg ${S.hole+1} van ${S.holes.length} · par ${H.par}</span></div><button class="nb" data-a="next" aria-label="Volgende kroeg">›</button></div>`;
-S.teams.forEach(t=>{const v=get(t.id,S.hole);
+const H=S.holes[V.hole];
+let h=`<div class="hole"><button class="nb" data-a="prev" aria-label="Vorige kroeg">‹</button><div class="t"><b>${esc(H.name)}</b><span>Kroeg ${V.hole+1} van ${S.holes.length} · par ${H.par}</span></div><button class="nb" data-a="next" aria-label="Volgende kroeg">›</button></div>`;
+S.teams.forEach(t=>{const v=get(t.id,V.hole);
 h+=`<div class="row"><span class="n">${esc(t.name)}</span><button class="step" data-a="dec" data-t="${t.id}" aria-label="Minder slokken ${esc(t.name)}">−</button><span class="val ${v==null?"empty":""}">${v==null?"–":v}</span><button class="step" data-a="inc" data-t="${t.id}" aria-label="Meer slokken ${esc(t.name)}">+</button></div>`});
 app.innerHTML=h+`<p class="hint">Vul het aantal slokken in. De eerste tik op + zet de score op par.</p>`;
 }
@@ -104,30 +126,29 @@ function settings(){
 let h=`<h2>Teams (max 10)</h2>`;
 S.teams.forEach(t=>{h+=`<div class="set"><input data-a="tname" data-t="${t.id}" value="${esc(t.name)}" aria-label="Teamnaam"><button class="x" data-a="deltm" data-t="${t.id}" aria-label="Verwijder ${esc(t.name)}">✕</button></div>`});
 if(S.teams.length<10)h+=`<button class="btn" data-a="addtm">Team toevoegen</button>`;
-h+=`<h2>Kroegen en par</h2><p class="hint">Naam van de kroeg, en par in slokken.</p>`;
+h+=`<h2>Kroegen en par</h2><p class="hint">Naam van de kroeg, en par in slokken. Wijzigingen zien alle spelers direct.</p>`;
 S.holes.forEach((x,i)=>{h+=`<div class="set"><input data-a="hname" data-i="${i}" value="${esc(x.name)}" aria-label="Kroeg ${i+1}"><input class="p" type="number" min="1" max="20" inputmode="numeric" data-a="hpar" data-i="${i}" value="${x.par}" aria-label="Par kroeg ${i+1}"></div>`});
 h+=`<h2>Opnieuw beginnen</h2><button class="btn danger" data-a="reset">Alle scores wissen</button>`;
 app.innerHTML=h;
 }
-document.querySelector("nav").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;S.view=b.dataset.v;save();render()});
+document.querySelector("nav").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;V.view=b.dataset.v;saveV();render()});
 app.addEventListener("click",e=>{
 const b=e.target.closest("button");if(!b)return;const a=b.dataset.a,t=b.dataset.t;
-if(a==="prev"){S.hole=(S.hole+S.holes.length-1)%S.holes.length}
-else if(a==="next"){S.hole=(S.hole+1)%S.holes.length}
-else if(a==="inc"){const v=get(t,S.hole);set(t,S.hole,v==null?S.holes[S.hole].par:v+1)}
-else if(a==="dec"){const v=get(t,S.hole);if(v!=null)set(t,S.hole,v<=1?undefined:v-1)}
-else if(a==="addtm"){if(S.teams.length<10){const id="t"+Date.now();S.teams.push({id,name:"Team "+(S.teams.length+1)})}}
-else if(a==="deltm"){if(confirm("Dit team en de scores verwijderen?")){S.teams=S.teams.filter(x=>x.id!==t);delete S.scores[t]}}
-else if(a==="reset"){if(confirm("Alle scores wissen?"))S.scores={}}
+if(a==="prev"){V.hole=(V.hole+S.holes.length-1)%S.holes.length;saveV()}
+else if(a==="next"){V.hole=(V.hole+1)%S.holes.length;saveV()}
+else if(a==="inc"){const v=get(t,V.hole);wScore(t,V.hole,v==null?S.holes[V.hole].par:v+1)}
+else if(a==="dec"){const v=get(t,V.hole);if(v!=null)wScore(t,V.hole,v<=1?null:v-1)}
+else if(a==="addtm"){if(S.teams.length<10){S.teams.push({id:"t"+Date.now(),name:"Team "+(S.teams.length+1)});wTeams()}}
+else if(a==="deltm"){if(confirm("Dit team en de scores verwijderen?")){S.teams=S.teams.filter(x=>x.id!==t);delete S.scores[t];wTeams();if(db)db.ref(`bord/scores/${t}`).remove();else saveL()}}
+else if(a==="reset"){if(confirm("Alle scores wissen voor iedereen?")){S.scores={};if(db)db.ref("bord/scores").remove();else saveL()}}
 else return;
-save();render();
+render();
 });
-app.addEventListener("input",e=>{
+app.addEventListener("change",e=>{
 const i=e.target,a=i.dataset.a;
-if(a==="tname"){S.teams.find(x=>x.id===i.dataset.t).name=i.value}
-else if(a==="hname"){S.holes[+i.dataset.i].name=i.value}
-else if(a==="hpar"){const v=parseInt(i.value,10);if(v>0)S.holes[+i.dataset.i].par=v}
-save();
+if(a==="tname"){S.teams.find(x=>x.id===i.dataset.t).name=i.value;wTeams()}
+else if(a==="hname"){S.holes[+i.dataset.i].name=i.value;wHoles()}
+else if(a==="hpar"){const v=parseInt(i.value,10);if(v>0){S.holes[+i.dataset.i].par=v;wHoles()}}
 });
 render();
 </script>
