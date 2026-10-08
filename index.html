@@ -8,12 +8,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
-:root{--bg:#130f1e;--bg2:#1b1730;--bg3:#262040;--gold:#f3b65c;--gold2:#ffcd86;--cream:#f4efe6;--muted:#a09aba;--border:rgba(255,255,255,0.09);--border2:rgba(243,182,92,0.40);--red:#ff8f8f;--font-display:'Bricolage Grotesque',sans-serif;--font-body:'Hanken Grotesk',sans-serif}
+:root{--bg:#0B1220;--bg2:#111a2e;--bg3:#16213a;--gold:#22C55E;--yellow:#FACC15;--gold2:#4ade80;--cream:#f1f5f9;--muted:#94a3b8;--border:rgba(255,255,255,0.09);--border2:rgba(34,197,94,0.40);--red:#ff8f8f;--font-display:'Bricolage Grotesque',sans-serif;--font-body:'Hanken Grotesk',sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}
 [hidden]{display:none!important}
-body{background-color:#130f1e;background-image:radial-gradient(900px 520px at 8% -12%,rgba(243,182,92,0.14),transparent 60%),radial-gradient(820px 640px at 108% 112%,rgba(125,92,218,0.24),transparent 55%);background-attachment:fixed;color:var(--cream);font-family:var(--font-body);min-height:100vh;display:flex;justify-content:center;padding:1.5rem;-webkit-font-smoothing:antialiased}
+body{background-color:#0B1220;background-image:radial-gradient(900px 520px at 8% -12%,rgba(34,197,94,0.14),transparent 60%),radial-gradient(820px 640px at 108% 112%,rgba(250,204,21,0.10),transparent 55%);background-attachment:fixed;color:var(--cream);font-family:var(--font-body);min-height:100vh;display:flex;justify-content:center;padding:1.5rem;-webkit-font-smoothing:antialiased}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
-.card{position:relative;z-index:1;width:100%;max-width:480px;align-self:flex-start;margin:auto 0;background:linear-gradient(180deg,rgba(40,34,66,0.7),rgba(24,20,42,0.7));backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:24px;box-shadow:0 36px 90px -36px rgba(0,0,0,0.8);padding:1.75rem 1.4rem;animation:cardin .5s ease both}
+.card{position:relative;z-index:1;width:100%;max-width:480px;align-self:flex-start;margin:auto 0;background:linear-gradient(180deg,rgba(20,31,52,0.72),rgba(11,18,32,0.72));backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:24px;box-shadow:0 36px 90px -36px rgba(0,0,0,0.8);padding:1.75rem 1.4rem;animation:cardin .5s ease both}
 @keyframes cardin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .logo{font-family:var(--font-display);font-weight:800;font-size:46px;letter-spacing:-0.02em;text-align:center}
 .logo span{color:var(--gold)}
@@ -22,13 +22,13 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opa
 label{font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px}
 input{font-family:var(--font-body)}
 input[type=text],input[type=password],input[type=number]{width:100%;background:rgba(0,0,0,0.28);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--cream);font-size:15px;outline:none}
-input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(243,182,92,0.16)}
+input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(34,197,94,0.16)}
 input::placeholder{color:var(--muted)}
 .pw-wrap{position:relative;margin-bottom:1rem}.pw-wrap input{padding-right:44px}
 .pw-eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:transparent;border:none;cursor:pointer;font-size:18px;padding:4px}
 .err{color:var(--red);font-size:13px;margin-bottom:.75rem;min-height:1em}
 .btn{width:100%;padding:13px;font-size:15px;font-weight:700;font-family:var(--font-body);border-radius:14px;border:none;cursor:pointer}
-.btn-gold{background:linear-gradient(180deg,var(--gold2),var(--gold));color:#2a1c05;box-shadow:0 12px 26px -12px rgba(243,182,92,0.65)}
+.btn-gold{background:linear-gradient(180deg,var(--gold2),var(--gold));color:#0B1220;box-shadow:0 12px 26px -12px rgba(34,197,94,0.65)}
 .btn-gold:hover{filter:brightness(1.05)}
 .btn-line{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:10px 16px;font-size:14px;font-weight:600;font-family:var(--font-body);cursor:pointer}
 .btn-line:hover{border-color:var(--gold);color:var(--cream)}
@@ -36,28 +36,28 @@ input::placeholder{color:var(--muted)}
 button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 nav{display:flex;gap:6px;margin-bottom:1.2rem}
 nav button{flex:1;padding:10px 6px;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--cream);border-radius:12px;font:600 14px var(--font-body);cursor:pointer}
-nav button[aria-selected="true"]{background:linear-gradient(180deg,var(--gold2),var(--gold));color:#2a1c05;border-color:var(--gold)}
+nav button[aria-selected="true"]{background:linear-gradient(180deg,var(--gold2),var(--gold));color:#0B1220;border-color:var(--gold)}
 .hole{display:flex;align-items:center;gap:10px;margin-bottom:1rem}
 .hole .t{flex:1;text-align:center}
 .hole .t b{display:block;font-family:var(--font-display);font-size:1.45rem;font-weight:800}
 .hole .t span{color:var(--muted);font-size:.85rem}
-.nb{width:46px;height:46px;border-radius:50%;border:1px solid var(--border2);background:rgba(243,182,92,0.08);color:var(--gold);font-size:1.4rem;cursor:pointer}
+.nb{width:46px;height:46px;border-radius:50%;border:1px solid var(--border2);background:rgba(34,197,94,0.08);color:var(--gold);font-size:1.4rem;cursor:pointer}
 .row{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:14px;padding:8px 10px;margin-bottom:8px}
 .row .n{flex:1;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .step{width:48px;height:48px;border-radius:12px;border:1px solid var(--border2);background:rgba(0,0,0,0.28);color:var(--cream);font-size:1.5rem;font-weight:600;cursor:pointer}
-.step:active{background:rgba(243,182,92,0.2)}
-.val{width:44px;text-align:center;font-family:var(--font-display);font-size:1.7rem;font-weight:800;color:var(--gold)}
+.step:active{background:rgba(34,197,94,0.2)}
+.val{width:44px;text-align:center;font-family:var(--font-display);font-size:1.7rem;font-weight:800;color:var(--yellow)}
 .val.empty{color:var(--muted)}
 .sb-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,0.04);margin-bottom:8px}
-.sb-item.first{border-color:var(--gold);background:rgba(243,182,92,0.12)}
+.sb-item.first{border-color:var(--gold);background:rgba(34,197,94,0.12)}
 .sb-rank{font-size:18px;width:28px;text-align:center}
 .sb-name{flex:1;min-width:0}.sb-name b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sb-name small{color:var(--muted);font-size:12px}
-.sb-pts{font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:var(--gold)}
+.sb-pts{font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:var(--yellow)}
 .wrap{overflow-x:auto;margin-top:1.2rem;border:1px solid var(--border);border-radius:14px}
 table{border-collapse:collapse;width:100%;font-size:.85rem}
 th,td{padding:7px 8px;text-align:center;border-bottom:1px solid var(--border);white-space:nowrap}
-th:first-child,td:first-child{position:sticky;left:0;background:#1d1933;text-align:left;font-weight:600;border-right:1px solid var(--border)}
+th:first-child,td:first-child{position:sticky;left:0;background:#0f172a;text-align:left;font-weight:600;border-right:1px solid var(--border)}
 thead th{color:var(--muted);font-weight:600}
 h2{font-family:var(--font-display);font-size:1.1rem;font-weight:700;margin:1.4rem 0 8px}
 .set{display:flex;gap:8px;margin-bottom:8px}
