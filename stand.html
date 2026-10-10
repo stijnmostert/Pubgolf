@@ -18,6 +18,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opa
 .logo span{color:var(--gold)}
 .logo small{display:block;font-family:var(--font-body);font-size:13px;font-weight:700;letter-spacing:0.3em;color:var(--muted);margin-top:2px}
 .sub{text-align:center;font-size:13px;color:var(--muted);margin:2px 0 1.4rem;min-height:1.2em}
+.now{text-align:center;border:1px solid rgba(34,197,94,0.4);background:rgba(34,197,94,0.1);border-radius:14px;padding:12px;margin-bottom:1.2rem}
+.now small{display:block;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted)}
+.now b{display:block;font-family:var(--font-display);font-size:1.7rem;font-weight:800;color:var(--yellow);margin:2px 0}
 .sb-title{font-family:var(--font-display);font-weight:800;font-size:1.6rem;text-align:center;margin-bottom:1rem}
 .sb-title span{color:var(--gold)}
 .sb-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,0.04);margin-bottom:8px}
@@ -59,6 +62,7 @@ input::placeholder{color:var(--muted)}
 <button class="btn" type="submit">Meedoen →</button>
 </form>
 <div id="gate" hidden>
+<div class="now" id="now"></div>
 <div class="sb-title">Score<span>bord</span> 🏆</div>
 <div id="app"></div>
 <p class="hint">Alleen kijken. De stand wordt live bijgewerkt.</p>
@@ -85,6 +89,8 @@ db.ref("bord").on("value",snap=>{
 const d=snap.val();
 if(!d){app.innerHTML='<p class="hint">Nog geen scores.</p>';return}
 const teams=arr(d.teams),holes=arr(d.holes),scores=d.scores||{};
+const cur=Math.min(Math.max(+d.current||0,0),Math.max(holes.length-1,0));
+document.getElementById("now").innerHTML=holes.length?`<small>We zijn nu bij</small><b>${esc(holes[cur].name)}</b><small>Kroeg ${cur+1} van ${holes.length}</small>`:"";
 const get=(t,h)=>(scores[t]||{})[h];
 const stats=t=>{let tot=0,n=0;holes.forEach((_,i)=>{const v=get(t.id,i);if(typeof v==="number"){tot+=v;n++}});return{tot,n}};
 const r=teams.map(t=>({t,...stats(t)})).sort((a,b)=>a.tot-b.tot);
